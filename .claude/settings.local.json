@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(mkdir -p app/api/video/token_placeholder)",
+      "Bash(mkdir -p app/v/token_placeholder)",
+      "Bash(mv app/api/video/token_placeholder \"app/api/video/[token]\")",
+      "Bash(mv app/v/token_placeholder \"app/v/[token]\")",
+      "Bash(rm app/api/route.ts)",
+      "Bash(rm app/api/videos/route.ts)",
+      "Bash(rm app/v/page.tsx)",
+      "Bash(rm app/admin/upload/button.ts)",
+      "Bash(find C:/rn_webs/grandma-video-service/app C:/rn_webs/grandma-video-service/lib -name *.ts -o -name *.tsx)",
+      "Bash(vercel --version)",
+      "Bash(vercel whoami:*)"
+    ]
+  }
+}
