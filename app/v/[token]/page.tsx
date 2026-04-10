@@ -1,28 +1,28 @@
 'use client';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 
 interface VideoData {
     name: string;
     videoUrl: string;
 }
 
-export default function VideoPage({
-    params,
-}: {
-    params: Promise<{ token: string }>;
-}) {
-    const { token } = use(params);
+export default function VideoPage() {
+    const params = useParams<{ token: string }>();
+    const token = params?.token;
     const [data, setData] = useState<VideoData | null>(null);
     const [error, setError] = useState('');
 
     useEffect(() => {
+        if (!token) return;
+
         fetch(`/api/video/${token}`)
-            .then((r) => {
-                if (!r.ok) throw new Error('영상을 찾을 수 없습니다.');
-                return r.json();
+            .then((r) => r.json())
+            .then((json) => {
+                if (json.error) throw new Error(json.error);
+                setData(json);
             })
-            .then(setData)
-            .catch((e) => setError(e.message));
+            .catch((e: Error) => setError(e.message));
     }, [token]);
 
     if (error) {
@@ -34,14 +34,14 @@ export default function VideoPage({
     }
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-black gap-4">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-black gap-4 p-4">
             {data ? (
                 <>
                     <h1 className="text-white text-2xl">{data.name}님께 드리는 영상</h1>
                     <video
                         src={data.videoUrl}
-                        autoPlay
                         controls
+                        playsInline
                         className="max-w-full rounded-lg"
                     />
                     <a
