@@ -4,6 +4,9 @@ export async function GET() {
     const results: Record<string, unknown> = {};
 
     try {
+        const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+        if (!raw) throw new Error('FIREBASE_SERVICE_ACCOUNT env var missing');
+        JSON.parse(raw); // 파싱 가능한지 확인
         const db = getDb();
         await db.collection('health').limit(1).get();
         results.firebase = 'ok';
