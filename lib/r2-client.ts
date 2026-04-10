@@ -1,13 +1,31 @@
-// lib/r2-client.ts
 import { S3Client } from '@aws-sdk/client-s3';
 
-export const r2 = new S3Client({
-    region: 'auto',
-    endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-    credentials: {
-        accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
-    },
-});
+export function getR2() {
+    const accountId = process.env.R2_ACCOUNT_ID;
+    const accessKeyId = process.env.R2_ACCESS_KEY_ID;
+    const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
 
-export const BUCKET = process.env.R2_BUCKET_NAME!;
+    if (!accountId || !accessKeyId || !secretAccessKey) {
+        throw new Error(
+            `R2 env vars missing: ${[
+                !accountId && 'R2_ACCOUNT_ID',
+                !accessKeyId && 'R2_ACCESS_KEY_ID',
+                !secretAccessKey && 'R2_SECRET_ACCESS_KEY',
+            ]
+                .filter(Boolean)
+                .join(', ')}`
+        );
+    }
+
+    return new S3Client({
+        region: 'auto',
+        endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+        credentials: { accessKeyId, secretAccessKey },
+    });
+}
+
+export function getBucket() {
+    const bucket = process.env.R2_BUCKET_NAME;
+    if (!bucket) throw new Error('R2_BUCKET_NAME env var missing');
+    return bucket;
+}
