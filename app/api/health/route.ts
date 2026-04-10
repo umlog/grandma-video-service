@@ -1,17 +1,26 @@
+import { getDb } from '@/lib/firebase-admin';
+
 export async function GET() {
-    const rawKey = process.env.FIREBASE_PRIVATE_KEY ?? '';
-    const parsedKey = rawKey.includes('\\n') ? rawKey.replace(/\\n/g, '\n') : rawKey;
+    const results: Record<string, unknown> = {};
 
-    const vars = {
-        R2_ACCOUNT_ID: !!process.env.R2_ACCOUNT_ID,
-        R2_ACCESS_KEY_ID: !!process.env.R2_ACCESS_KEY_ID,
-        R2_SECRET_ACCESS_KEY: !!process.env.R2_SECRET_ACCESS_KEY,
-        R2_BUCKET_NAME: !!process.env.R2_BUCKET_NAME,
-        FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID ?? '',
-        FIREBASE_CLIENT_EMAIL: !!process.env.FIREBASE_CLIENT_EMAIL,
-        FIREBASE_PRIVATE_KEY_starts: parsedKey.slice(0, 40),
-        FIREBASE_PRIVATE_KEY_ends: parsedKey.slice(-20),
-    };
+    try {
+        const db = getDb();
+        await db.collection('health').limit(1).get();
+        results.firebase = 'ok';
+    } catch (err) {
+        results.firebase = err instanceof Error ? err.message : String(err);
+    }
 
-    return Response.json({ vars });
+    try {
+        const { getR2, getBucket } = await import('@/lib/r2-client');
+        const { HeadBucketCommand } = await import('@aws-sdk/client-s3');
+        const r2 = getR2();
+        const bucket = getBucket();
+        await r2.send(new HeadBucketCommand({ Bucket: bucket }));
+        results.r2 = 'ok';
+    } catch (err) {
+        results.r2 = err instanceof Error ? err.message : String(err);
+    }
+
+    return Response.json(results);
 }
