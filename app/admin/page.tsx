@@ -22,7 +22,10 @@ export default function AdminPage() {
                 body: JSON.stringify({ recipientName, fileType: file.type }),
             });
 
-            if (!res.ok) throw new Error('업로드 URL 생성 실패');
+            if (!res.ok) {
+                const errText = await res.text();
+                throw new Error(`업로드 URL 생성 실패 (${res.status}): ${errText}`);
+            }
             const { uploadUrl, token } = await res.json();
 
             setStatus('R2에 영상 업로드 중...');

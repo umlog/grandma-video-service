@@ -12,7 +12,9 @@
       "Bash(rm app/admin/upload/button.ts)",
       "Bash(find C:/rn_webs/grandma-video-service/app C:/rn_webs/grandma-video-service/lib -name *.ts -o -name *.tsx)",
       "Bash(vercel --version)",
-      "Bash(vercel whoami:*)"
+      "Bash(vercel whoami:*)",
+      "Bash(git -C C:/rn_webs/grandma-video-service remote -v)",
+      "Bash(chmod:*)"
     ]
   }
 }
