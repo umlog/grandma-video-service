@@ -1,4 +1,6 @@
 import type { NextRequest } from 'next/server';
+
+export const runtime = 'nodejs';
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { getR2, getBucket } from '@/lib/r2-client';

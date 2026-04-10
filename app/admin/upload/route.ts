@@ -5,6 +5,8 @@ import { getR2, getBucket } from '@/lib/r2-client';
 import { getDb } from '@/lib/firebase-admin';
 import { v4 as uuidv4 } from 'uuid';
 
+export const runtime = 'nodejs';
+
 export async function POST(req: NextRequest) {
     try {
         const { recipientName, fileType } = await req.json();
